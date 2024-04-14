@@ -53,3 +53,46 @@ pub fn now_as_millis() -> u128 {
         .expect("Time went backwards");
     duration_since_epoch.as_millis()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_block_creation() {
+        let index = 0;
+        let timestamp = now_as_millis();
+        let data = "Genesis Block".to_string();
+        let previous_hash = "0".to_string();
+
+        let block = Block::new(index, timestamp, data.clone(), previous_hash.clone());
+
+        assert_eq!(block.index, index);
+        assert_eq!(block.timestamp, timestamp);
+        assert_eq!(block.data, data);
+        assert_eq!(block.previous_hash, previous_hash);
+        assert!(!block.hash.is_empty()); // Ensure that the hash is not empty
+    }
+
+    #[test]
+    fn test_hash_uniqueness() {
+        let block_a = Block::new(1, now_as_millis(), "Block A".to_string(), "0".to_string());
+        let block_b = Block::new(2, now_as_millis(), "Block B".to_string(), "0".to_string());
+
+        assert_ne!(block_a.hash, block_b.hash); // Hashes should be unique for different blocks
+    }
+
+    #[test]
+    fn test_hash_consistency() {
+        let index = 3;
+        let timestamp = now_as_millis();
+        let data = "Consistency Test".to_string();
+        let previous_hash = "0".to_string();
+
+        let block = Block::new(index, timestamp, data.clone(), previous_hash.clone());
+        let expected_hash = block.hash.clone();
+
+        // If we create the same block again, it should have the same hash
+        assert_eq!(Block::new(index, timestamp, data, previous_hash).hash, expected_hash);
+    }
+}
