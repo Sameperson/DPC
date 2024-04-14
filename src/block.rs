@@ -26,16 +26,13 @@ impl Block {
     fn calculate_hash(index: u64, timestamp: u128, data: &str, previous_hash: &str) -> String {
         let mut hasher = Sha256::new();
 
-        // Write input message bytes
         hasher.update(index.to_ne_bytes()); // Convert u64 to bytes in native endian order
         hasher.update(timestamp.to_ne_bytes());
         hasher.update(data.as_bytes());
         hasher.update(previous_hash.as_bytes());
 
-        // Read hash digest and consume hasher
         let result = hasher.finalize();
 
-        // Convert the hash to a hexadecimal string
         hex::encode(result)
     }
 }
