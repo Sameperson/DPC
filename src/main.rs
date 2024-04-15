@@ -1,6 +1,18 @@
 mod block;
+mod blockchain;
+mod utils;
+
+use blockchain::Blockchain;
 
 fn main() {
-    let genesis_block = block::Block::new(0, block::now_as_millis(), "Genesis Block".to_string(), "".to_string());
-    println!("{}", genesis_block);
+    let mut my_blockchain = Blockchain::new();
+    my_blockchain.add_block("First real block data".to_string());
+    my_blockchain.add_block("Second block data".to_string());
+    my_blockchain.add_block("Third block data".to_string());
+
+    for block in my_blockchain.blocks.iter() {
+        println!("{}", block);
+    }
+
+    println!("Blockchain valid: {}", my_blockchain.is_valid());
 }

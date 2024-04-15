@@ -1,4 +1,3 @@
-use std::time::{SystemTime, UNIX_EPOCH};
 use std::fmt::{self, Formatter, Display};
 use sha2::{Sha256, Digest};
 
@@ -23,7 +22,7 @@ impl Block {
         }
     }
 
-    fn calculate_hash(index: u64, timestamp: u128, data: &str, previous_hash: &str) -> String {
+    pub(crate) fn calculate_hash(index: u64, timestamp: u128, data: &str, previous_hash: &str) -> String {
         let mut hasher = Sha256::new();
 
         hasher.update(index.to_ne_bytes()); // Convert u64 to bytes in native endian order
@@ -43,16 +42,9 @@ impl Display for Block {
                self.index, self.hash, self.data, self.timestamp, self.previous_hash)
     }
 }
-
-pub fn now_as_millis() -> u128 {
-    let duration_since_epoch = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards");
-    duration_since_epoch.as_millis()
-}
-
 #[cfg(test)]
 mod tests {
+    use crate::utils::now_as_millis;
     use super::*;
 
     #[test]
