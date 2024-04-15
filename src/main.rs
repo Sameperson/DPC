@@ -2,17 +2,18 @@ mod block;
 mod blockchain;
 mod utils;
 
-use blockchain::Blockchain;
+use p256::ecdsa::{SigningKey, VerifyingKey, signature::{Signer, Verifier}};
+use sha2::{Digest};
+use std::fmt::{Display};
+use crate::block::Block;
+use crate::utils::now_as_millis;
 
 fn main() {
-    let mut my_blockchain = Blockchain::new();
-    my_blockchain.add_block("First real block data".to_string());
-    my_blockchain.add_block("Second block data".to_string());
-    my_blockchain.add_block("Third block data".to_string());
+    let mut block = Block::new(1, now_as_millis(), "Patient data".to_string(), "0".to_string(), "patient123".to_string(), "checkup".to_string());
+    let signing_key = SigningKey::random(&mut rand::thread_rng());
+    let verifying_key = VerifyingKey::from(&signing_key);
 
-    for block in my_blockchain.blocks.iter() {
-        println!("{}", block);
-    }
-
-    println!("Blockchain valid: {}", my_blockchain.is_valid());
+    block.sign_block(&signing_key);
+    println!("Block signed: {}", block.verify_signature(&verifying_key));
+    println!("{}", block);
 }
